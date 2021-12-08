@@ -13,7 +13,6 @@
 
 """
 
-
 import os
 import sys
 import shutil
@@ -27,14 +26,17 @@ if not __package__:
 from firedm.view import IView
 from firedm import utils
 from firedm.utils import format_bytes, format_seconds
-from firedm import config 
+from firedm import config
 
 
 def write(s, end=''):
-    sys.stdout.write(s+end)
+    sys.stdout.write(s + end)
     sys.stdout.flush()
 
-terminal_size=namedtuple('terminal_size', ('width', 'height'))
+
+terminal_size = namedtuple('terminal_size', ('width', 'height'))
+
+
 def get_terminal_size():
     """get terminal window size, return 2-tuple (width, height)"""
     try:
@@ -44,23 +46,25 @@ def get_terminal_size():
         size = (100, 20)
     return terminal_size(*size)
 
+
 class CmdView(IView):
     """concrete class for terminal user interface"""
+
     def __init__(self, controller=None):
         self.controller = controller
         self.total_size = None
         self.progress = 0
         self.terminal_size = None
         self.printing_bar = Event()
-        self.sdt_buffer=Queue()
-        
+        self.sdt_buffer = Queue()
+
         self.printing_bar.clear()
 
     def reserve_last_line(self):
         self.printing_bar.set()
 
         write("\0337")  # Save cursor position
-        write(f"\033[0;{self.terminal_size.height-1}r")  # Reserve the bottom line
+        write(f"\033[0;{self.terminal_size.height - 1}r")  # Reserve the bottom line
         write("\0338")  # Restore the cursor position
         write("\033[1A")  # Move up one line
 
@@ -79,48 +83,48 @@ class CmdView(IView):
 
     def run(self):
         """setup terminal for progress bar"""
-        if config.operating_system=='Windows':
+        if config.operating_system == 'Windows':
             return
 
-        utils.my_print=self.normal_print
-        self.terminal_size=get_terminal_size()
+        utils.my_print = self.normal_print
+        self.terminal_size = get_terminal_size()
         self.reserve_last_line()
-    
+
     def quit(self):
         """reset terminal"""
-        if config.operating_system=='Windows':
+        if config.operating_system == 'Windows':
             return
-    
+
         self.release_last_line()
-        utils.my_print=print
+        utils.my_print = print
 
     def print_progress_bar(self, percent, suffix='', bar_length=20, fill='█'):
         """print progress bar to screen, percent is number between 0 and 100"""
-    
+
         scale = bar_length / 100
         filled_length = int(percent * scale)
-        bar = fill * filled_length + ' '*(bar_length - filled_length)
+        bar = fill * filled_length + ' ' * (bar_length - filled_length)
 
         # get screen size
         terminal = get_terminal_size()
 
         line = f'\r {percent}% [{bar}] {suffix}'
         end_spaces = terminal.width - len(line)
-        line += ' '*end_spaces
+        line += ' ' * end_spaces
 
         # truncate line 
         line = line[:terminal.width]
 
-        if config.operating_system=='windows':
+        if config.operating_system == 'Windows':
             write(line, end='\r')
             return
 
         # terminal size has changed
         if terminal != self.terminal_size:
             self.release_last_line()
-            self.terminal_size=terminal
+            self.terminal_size = terminal
             self.reserve_last_line()
-            
+
         self.print_onlast(line)
 
     def print_onlast(self, s):
@@ -137,7 +141,7 @@ class CmdView(IView):
         self.sdt_buffer.put(s)
         if self.printing_bar.is_set():
             return
-        
+
         for _ in range(self.sdt_buffer.qsize()):
             write(self.sdt_buffer.get(), end=end)
 
@@ -171,7 +175,6 @@ class CmdView(IView):
             except:
                 if config.test_mode:
                     raise
-
 
             # to ignore repeated updates after 100%
             self.progress = progress
@@ -207,8 +210,8 @@ class CmdView(IView):
         options_lines = [f'  {k}: {str(v)}' for k, v in options_map.items()]
 
         # get the width of longest line in msg body or options
-        max_line_width = max(max([len(line) for line in msg_lines]), max([len(line) for line in options_lines])) 
-        
+        max_line_width = max(max([len(line) for line in msg_lines]), max([len(line) for line in options_lines]))
+
         # get current terminal window size (width)
         terminal_width = get_terminal_size()[0]
 
@@ -234,7 +237,7 @@ class CmdView(IView):
             line = '* ' + line + ' ' * delta + ' *'
 
             output_lines[i] = line
-        
+
         # create message string
         msg = '\n'.join(output_lines)
         msg = '\n' + '*' * box_width + '\n' + msg + '\n' + '*' * box_width
@@ -245,11 +248,10 @@ class CmdView(IView):
             try:
                 # get user selection
                 # it will raise exception if user tries to input number not in options_map
-                response = options_map[int(txt)]  
-                print() # print empty line
+                response = options_map[int(txt)]
+                print()  # print empty line
                 break  # exit while loop if user entered a valid selection
             except:
                 print('\n invalid entry, try again.\n')
 
         return response
-
