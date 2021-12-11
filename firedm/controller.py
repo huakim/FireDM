@@ -395,10 +395,6 @@ class Controller:
             if playlist:
                 refreshed_d = playlist[0]
 
-                # get old name and folder
-                refreshed_d.name = name
-                refreshed_d.folder = folder
-
                 # select video stream
                 refreshed_d.select_stream(format_id=d.format_id, extension=d.extension, mediatype=d.type)
                 log('selected stream:    ', d.selected_quality)
@@ -418,6 +414,10 @@ class Controller:
                 # update old object
                 d.__dict__.update(refreshed_d.__dict__)
                 d.register_callback(self.observer)
+
+        # restore original name and folder
+        d.name = name
+        d.folder = folder
 
         return d
 
