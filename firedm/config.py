@@ -200,7 +200,7 @@ ditem_show_top = True
 enable_systray = True if operating_system == 'Windows' else False
 minimize_to_systray = False
 
-DEFAULT_WINDOW_SIZE = (800, 433)  # width, height in pixels
+DEFAULT_WINDOW_SIZE = (925, 500)  # width, height in pixels
 window_size = DEFAULT_WINDOW_SIZE
 window_maximized = False
 force_window_maximize = False
