@@ -21,8 +21,7 @@ Developed in Python, based on "LibCurl", and "youtube_dl".
 
 ---
 **Features**:
-* High download speeds "based on LibCurl" -
-  [See Speed test of: aria2 vs FireDM](https://user-images.githubusercontent.com/58998813/74993622-361bd080-5454-11ea-8bda-173bfcf16349.gif)
+* High download speeds "based on LibCurl"
 * Multi-connection downloading "Multithreading"
 * Automatic file segmentation.
 * Automatic refresh for dead links.
