@@ -55,7 +55,7 @@ def ignore_errors(func):
 
     def wraper(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except:
             pass
 
