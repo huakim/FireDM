@@ -14,9 +14,20 @@
 
 import os
 from packaging.version import parse
+from importlib.util import find_spec
 import sys
 import shutil
 import re
+
+
+def get_pkg_path(pkg_name):
+    """get package installation path without importing"""
+    spec = find_spec(pkg_name)
+    if spec:
+        pkg_path = os.path.dirname(spec.origin)
+    else:
+        pkg_path = None
+    return pkg_path
 
 
 def get_pkg_version(pkg):
