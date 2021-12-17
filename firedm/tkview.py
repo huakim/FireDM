@@ -56,6 +56,8 @@ if config.operating_system == 'Linux':
     except Exception as e:
         print('Bidi support error:', e)
 
+# ibus disable, https://github.com/ibus/ibus/issues/2324
+os.environ['XMODIFIERS'] = "@im=none"
 
 config.atk_version = atk_version
 gui_font = None
