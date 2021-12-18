@@ -3887,6 +3887,7 @@ class MainWindow(IView):
 
         CheckEntryOption(tab, ' Run command:  ', entry_key='on_completion_command').pack(anchor='w', fill='x',
                                                                                          expand=True, padx=(0, 5))
+        CheckOption(tab, ' Exit FireDM', key='on_completion_exit').pack(anchor='w', fill='x', expand=True, padx=(0, 5))
         CheckOption(tab, ' Shutdown computer', key='shutdown_pc').pack(anchor='w', fill='x', expand=True, padx=(0, 5))
 
         separator()

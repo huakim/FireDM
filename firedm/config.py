@@ -148,6 +148,7 @@ download_thumbnail = False
 write_metadata = False  # write metadata to video file
 shutdown_pc = False
 on_completion_command = ''
+on_completion_exit = False
 use_server_timestamp = False  # write 'last modified' timestamp to downloaded file
 
 # ---------------------------------------------------------------------------------------Application Update Options-----

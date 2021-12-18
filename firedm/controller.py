@@ -1552,14 +1552,14 @@ class Controller:
                 break
 
             # check for "on-completion actions"
-            if any((config.on_completion_command, config.shutdown_pc)):
+            if config.on_completion_command or config.shutdown_pc or config.on_completion_exit:
                 # check for any active download, then set the trigger
-                if any([d.status in Status.active_states for d in self.d_map.values()]):
+                if [d for d in self.d_map.values() if d.status in Status.active_states]:
                     trigger = True
 
                 elif trigger:
-                    # check if all items are completed
-                    if all([d.status == Status.completed for d in self.d_map.values()]):
+                    # check if items no longer active or pending
+                    if not [d for d in self.d_map.values() if d.status in Status.active_states or d.status == Status.pending]:
                         # reset the trigger
                         trigger = False
 
@@ -1570,6 +1570,10 @@ class Controller:
                         # shutdown
                         if config.shutdown_pc:
                             self.shutdown_pc()
+
+                        # exit application
+                        if config.on_completion_exit:
+                            self.quit()
             else:
                 trigger = False
 
