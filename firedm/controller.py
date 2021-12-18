@@ -735,7 +735,7 @@ class Controller:
 
             time.sleep(60)
 
-    def _pre_download_checks(self, d, silent=False):
+    def _pre_download_checks(self, d, silent=False, force_rename=False):
         """do all checks required for this download
 
         Args:
@@ -843,13 +843,18 @@ class Controller:
 
         # search current list for previous item with same name, folder ---------------------------
         if d.uid in self.d_map:
-            log('download item', d.uid, 'already in list, check resume availability')
+            # log('download item', d.uid, 'already in list, check resume availability')
 
             # get download item from the list
             d_from_list = self.d_map[d.uid]
 
+            if force_rename:
+                forbidden_names = os.listdir(d.folder) + [d.name for d in self.d_map.values()]
+                d.name = auto_rename(d.name, forbidden_names)
+                d.calculate_uid()
+
             # if match ---> resume, else rename
-            if d.total_size == d_from_list.total_size:
+            elif d.total_size == d_from_list.total_size:
                 # don't resume active items'
                 if d_from_list.status in Status.active_states:
                     log('download is already in progress for this item')
@@ -891,8 +896,8 @@ class Controller:
 
         update_object(d, kwargs)
 
-        pre_checks = self._pre_download_checks(d, silent=silent)
-        print('precheck:', pre_checks)
+        pre_checks = self._pre_download_checks(d, silent=silent, force_rename=kwargs.get('force_rename', False))
+        # print('precheck:', pre_checks)
 
         if pre_checks:
             # update view
@@ -1059,6 +1064,7 @@ class Controller:
             if config.shutdown:
                 print('batch_download()> config.shutdown is true, terminating')
                 break
+            kwargs['force_rename'] = True
             self.autodownload(url, **kwargs)
             time.sleep(0.5)
 
