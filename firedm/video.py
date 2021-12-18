@@ -260,8 +260,8 @@ class Video(DownloadItem):
 
         # build menu
         stream_menu = ['Video streams:                     '] + [stream.name for stream in mp4_videos] + [stream.name for stream in other_videos]  \
-                      + ['', 'Audio streams:                 '] + [stream.name for stream in audio_streams]\
-                      + ['', 'Extra streams:                 '] + [stream.name for stream in extra_streams]
+                      + ['', 'Audio streams:                 '] + [stream.name for stream in audio_streams]
+                      # + ['', 'Extra streams:                 '] + [stream.name for stream in extra_streams]
 
         # stream menu map will be used to lookup streams from stream menu, can't use dictionary to allow repeated key names
         stream_menu_map = [None] + mp4_videos + other_videos + [None, None] + audio_streams + [None, None] + extra_streams
