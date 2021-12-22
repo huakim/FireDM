@@ -118,8 +118,21 @@ media_presets = dict(
     audio_quality='best'
 )
 
+# video qualities
+vq = {
+    4320: '4320p-8k',
+    2160: '2160p-4k',
+    1440: '1440p-HD',
+    1080: '1080-HD',
+    720: '720p',
+    480: '480p',
+    360: '360p',
+    240: '240p',
+    144: '144p',
+    }
+standard_video_qualities = list(vq.keys())
+video_quality_choices = ['best'] + list(vq.values()) + ['lowest']
 video_ext_choices = ('mp4', 'webm')
-video_quality_choices = ('best', '1080p', '720p', '480p', '360p', '240p', 'lowest')
 dash_audio_choices = ('best', 'lowest')
 audio_ext_choices = ('mp3', 'aac', 'wav', 'm4a', 'opus', 'flac', 'ogg', 'webm')
 audio_quality_choices = ('best', 'lowest')

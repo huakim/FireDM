@@ -2344,7 +2344,7 @@ class SimplePlaylist(tk.Toplevel):
         Combobox(video_fr, values=config.video_ext_choices, selection=config.media_presets['video_ext'], width=5,
                  textvariable=self.video_ext).pack(side='left', padx=(0, 3))
         Combobox(video_fr, values=config.video_quality_choices, selection=config.media_presets['video_quality'],
-                 width=6, textvariable=self.video_quality).pack(side='left', padx=(0, 3))
+                 width=10, textvariable=self.video_quality).pack(side='left', padx=(0, 3))
         tk.Label(video_fr, text='audio quality: ', bg=MAIN_BG, fg=MAIN_FG).pack(side='left', padx=(10, 0))
         Combobox(video_fr, values=config.dash_audio_choices, width=6, selection=config.media_presets['dash_audio'],
                  textvariable=self.dash_audio_quality).pack(side='left', padx=(0, 3))
