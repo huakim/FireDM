@@ -1127,7 +1127,7 @@ folderchooser = FileDialog(foldersonly=True).run
 
 class Browse(tk.Frame):
     """a frame contains an entry widget and browse button to browse for folders"""
-    def __init__(self, parent=None, value='', bg=None, fg=None, label=None, callback=None, **kwargs):
+    def __init__(self, parent=None, value='', bg=None, fg=None, label='Folder:', callback=None, buttonfirst=False, **kwargs):
         self.callback = callback
         bg = bg or MAIN_BG
         fg = fg or MAIN_FG
@@ -1135,12 +1135,11 @@ class Browse(tk.Frame):
         tk.Frame.__init__(self, parent, bg=bg, **kwargs)
 
         # download folder -------------------------------------------------------------------------------------------
-        tk.Label(self, text=label or 'Folder:', bg=bg, fg=fg).pack(side='left')
+        lbl = tk.Label(self, text=label, bg=bg, fg=fg)
 
         self.foldervar = tk.StringVar(value=value)
         folder_entry = tk.Entry(self, textvariable=self.foldervar, bg=bg, fg=fg, highlightthickness=0,
                                 relief='flat')
-        folder_entry.pack(side='left', padx=5, fill='x', expand=True)
 
         add_bidi_support(folder_entry, render_copy_paste=True, copy_paste_menu=True, ispath=True)
 
@@ -1152,7 +1151,16 @@ class Browse(tk.Frame):
         folder_entry.bind('<1>', self.update_recent_folders, add='+')
 
         browse_btn = Button(self, text='', image=imgs['folder_icon'], transparent=True, tooltip='change folder')
-        browse_btn.pack(side='left', padx=5)
+
+        # packing
+        if buttonfirst:
+            browse_btn.pack(side='left', padx=5)
+            lbl.pack(side='left')
+            folder_entry.pack(side='left', padx=(0, 5), fill='x', expand=True)
+        else:
+            lbl.pack(side='left')
+            folder_entry.pack(side='left', padx=5, fill='x', expand=True)
+            browse_btn.pack(side='left', padx=(0, 5))
 
         self.recent_menu = atk.RightClickMenu(browse_btn, [], bg=RCM_BG, fg=RCM_FG, abg=RCM_ABG, afg=RCM_AFG,
                                               bind_left_click=True, bind_right_click=False)
@@ -2424,7 +2432,7 @@ class SimplePlaylist(tk.Toplevel):
         def update_selection_lbl(*args):
             total = len(self.table.get_children())
             num = len(self.table.selection())
-            select_lbl_var.set(f' Selcted {num} of {total}')
+            select_lbl_var.set(f' Selected {num} of {total}')
             select_all_var.set(num == total)
             if num == 1 and self.table.focus():
                 itemid_var.set(f'item #{int(self.table.focus()) + 1}')
@@ -2445,8 +2453,8 @@ class SimplePlaylist(tk.Toplevel):
         Button(bottom_fr, text='Download', command=self.download).pack(side='right', padx=5)
 
         # download folder ----------------------------------------------------------------------------------------------
-        self.browse = Browse(bottom_fr, label='>')
-        self.browse.pack(side='left', padx=5)
+        self.browse = Browse(bottom_fr, label='', buttonfirst=True)
+        self.browse.pack(side='left', padx=5, fill='x', expand=True)
         self.browse.folder = config.download_folder
 
         top_fr.pack(fill='x', padx=5, pady=5)
