@@ -350,15 +350,25 @@ class Video(DownloadItem):
                     streams = [stream for stream in streams if stream.fragments] or streams
 
                 if quality:
-                    quality = quality.lower().replace('p', '')
+                    quality = quality.lower()
 
                     if quality == 'best':
                         streams = sorted(streams, key=lambda item: item.quality, reverse=True)
                     elif quality == 'lowest':
                         streams = sorted(streams, key=lambda item: item.quality)
                     else:
-                        quality = int(quality)
-                        streams = sorted(streams, key=lambda item: abs(quality - item.quality))
+                        q_dict = {v.lower(): k for k, v in config.vq.items()}
+                        quality = q_dict.get(quality, quality)
+
+                        if not quality.isdigit():
+                            # extract numbers from quality text
+                            match = re.match(r'\d+', quality)
+                            if match:
+                                quality = match.group()
+
+                        if quality.isdigit():
+                            quality = int(quality)
+                            streams = sorted(streams, key=lambda item: abs(quality - item.quality))
 
                 # select stream ----------------------------------------------------------------------------------------
                 stream = streams[0]
@@ -566,7 +576,9 @@ class Stream:
     @property
     def name(self):
         fps = f' - {self.fps} fps' if self.fps else ''
-        return self.raw_name + f' - {format_bytes(self.size)} - id:{self.format_id}{fps}'  # ¤ »
+        wh = f' - {self.width}x{self.height}' if self.height else ''
+        q = config.vq.get(self.quality, self.quality)
+        return f'    {self.extension} - {q}{wh} - {format_bytes(self.size)} - id:{self.format_id}{fps}'
 
     @property
     def raw_name(self):
@@ -578,13 +590,13 @@ class Stream:
             if self.mediatype == 'audio':
                 return int(self.abr)
             else:
-                # some video streams has its resolution's height different from its quality, e.g 1280 width x 676 height
-                # is actually 720p quality, will use format_note field and fallback to height.
-                match = re.match(r'\d+', self.format_note)
-                if match:
-                    return int(match.group())
-                else:
-                    return int(self.height)
+                # some video streams has its resolution's height different from its quality,
+                # e.g. 1280 width x 676 height is actually 720p quality, will use the nearest standard quality
+                height = int(self.height)
+                if height not in config.standard_video_qualities:
+                    height = sorted(config.standard_video_qualities, key=lambda item: abs(height - item))[0]
+
+                return height
         except:
             return 0
 
