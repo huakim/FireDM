@@ -119,6 +119,7 @@ class DownloadItem:
         self.extension = ''  # note: filename extension includes a dot, ex: '.mp4'
 
         self.folder = os.path.abspath(folder)
+        self.alternative_temp_folder = config.temp_folder
 
         self.url = url
         self.eff_url = ''
@@ -400,7 +401,7 @@ class DownloadItem:
 
     @property
     def temp_folder(self):
-        fp = config.temp_folder if os.path.isdir(config.temp_folder) else self.folder
+        fp = self.alternative_temp_folder if os.path.isdir(self.alternative_temp_folder) else self.folder
         name = f'firedm_{self.uid}'
         return os.path.join(fp, name)
 
