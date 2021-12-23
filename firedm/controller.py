@@ -1036,6 +1036,10 @@ class Controller:
         for video files it should download best quality, for video playlist, it will download first video
         """
 
+        stream_options = kwargs.setdefault('stream_options', {})
+        download_options = kwargs.setdefault('download_options', {})
+        subtitles = kwargs.get('subtitles', {})
+
         # noplaylist: fetch only the video, if the URL refers to a video and a playlist
         playlist = url_to_playlist(url, ytdloptions={'noplaylist': True})
         d = playlist[0]
@@ -1051,8 +1055,20 @@ class Controller:
             prefer_mp4 = kwargs.get('prefer_mp4', False)
             d.select_stream(quality=quality, extension=('mp4' if prefer_mp4 else None))
 
+        # select stream
+        if stream_options and d.type == MediaType.video:
+            d.select_stream(**stream_options)
+
+        # update download folder
+        folder = download_options.get('folder', None)
+        if folder:
+            d.folder = folder
+
         # download item
-        self.download(d, silent=True, **kwargs)
+        self.download(d, silent=True, **download_options, **kwargs)
+
+        if subtitles:
+            self.download_subtitles(subtitles, d=d)
 
     @threaded
     def batch_download(self, urls, **kwargs):

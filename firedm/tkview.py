@@ -2321,7 +2321,6 @@ class MediaPresets(tk.Frame):
 
         # subtitle -----------------------------------------------------------------------------------------------------
         sub_fr = tk.Frame(video_fr, bg=MAIN_BG)
-        sub_fr.pack(side='right', padx=(10, 0))
         Checkbutton(sub_fr, text='Subtitle: ', variable=self.sub_var).pack(side='left')
 
         def sub_lang_callback(lang):
@@ -2339,6 +2338,7 @@ class MediaPresets(tk.Frame):
         self.sub_ext.pack(side='left')
 
         if self.subtitles:
+            sub_fr.pack(side='right', padx=(10, 0))
             langs = list(self.subtitles.keys())
             lang_width = max([len(lang) for lang in langs]) or 4
 
@@ -2881,11 +2881,11 @@ class BatchWindow(tk.Toplevel):
     def create_widgets(self):
         main_frame = tk.Frame(self, bg=MAIN_BG)
         f = tk.Frame(main_frame, bg=MAIN_BG)
-        tk.Label(f, text='Enter Links below or import urls from a file', bg=MAIN_BG,
-                 fg=MAIN_FG).pack(side='left', anchor='w', padx=5, pady=5)
+        tk.Label(f, text='Download multiple links:', bg=MAIN_BG,
+                 fg=MAIN_FG).pack(side='left', anchor='w', pady=5)
         Button(f, image=imgs['folder_icon'], command=self.load_batch_file,
-               tooltip='load batch file').pack(side='left', padx=5)
-        f.pack(anchor='w')
+               tooltip='load urls from a file').pack(side='right', padx=5)
+        f.pack(anchor='w', fill='x')
 
         self.urls_text = atk.ScrolledText(main_frame, height=4, width=10, sbar_bg=SBAR_BG, sbar_fg=SBAR_FG, bg=MAIN_BG,
                                           fg=MAIN_FG, insertbackground=MAIN_FG)
@@ -2898,15 +2898,13 @@ class BatchWindow(tk.Toplevel):
 
         options_frame = tk.Frame(main_frame, bg=MAIN_BG)
         options_frame.pack(anchor='w', pady=5, fill='x')
-        tk.Label(options_frame, text='video quality:', bg=MAIN_BG, fg=MAIN_FG).pack(side='left', anchor='w', padx=5, pady=5)
-        self.quality = Combobox(options_frame, values=['Best', '1080p', '720p', '480p', '360p', 'Lowest'],
-                                      selection='Best', width=8)
-        self.quality.pack(side='left')
-        self.prefer_mp4 = tk.BooleanVar(value=False)
 
-        tk.Checkbutton(options_frame, text='prefer mp4 format', bg=MAIN_BG, fg=MAIN_FG, anchor='w', relief='flat',
-                       activebackground=MAIN_BG, highlightthickness=0, activeforeground=MAIN_FG, selectcolor=MAIN_BG,
-                       variable=self.prefer_mp4, onvalue=True, offvalue=False).pack(side='right', anchor='e', padx=10)
+        self.presets = MediaPresets(options_frame)
+        self.presets.pack(anchor='w', fill='x', expand=True, pady=5)
+
+        self.browse = Browse(main_frame, value=config.download_folder)
+        self.browse.pack(fill='x', pady=5)
+
         ttk.Separator(main_frame).pack(fill='x')
 
         bottom_frame = tk.Frame(main_frame, bg=MAIN_BG)
@@ -2925,14 +2923,18 @@ class BatchWindow(tk.Toplevel):
 
     def download(self, download_later=False):
         urls = parse_urls(self.get())
-        quality = self.quality.selection
 
-        self.controller.batch_download(urls, quality=quality, download_later=download_later,
-                                       folder=config.download_folder, prefer_mp4=self.prefer_mp4.get())
+        self.controller.batch_download(urls,
+                                       download_later=download_later,
+                                       stream_options=self.presets.get_stream_options(),
+                                       folder=self.browse.folder)
+        self.presets.save_presets()
         self.close()
 
     def add_url(self, url):
-        self.append('\n' + url)
+        urls = self.get()
+        if url not in urls:
+            self.append('\n' + url)
 
     def get(self):
         return self.urls_text.get("1.0", tk.END)
