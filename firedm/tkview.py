@@ -2273,58 +2273,21 @@ class CheckEntryOption(tk.Frame):
         return value
 
 
-class SimplePlaylist(tk.Toplevel):
-    """class for downloading video playlist
-        """
-    def __init__(self, parent, playlist=None, subtitles=None):
-        """initialize
-
-        Args:
-            parent: parent window (root)
-            playlist (iterable): video names only in a playlist, e.g. ('1- cats in the wild', '2- car racing', ...)
-                in case we have a huge playlist
-                e.g. https://www.youtube.com/watch?v=BZyjT5TkWw4&list=PL2aBZuCeDwlT56jTrxQ3FExn-dtchIwsZ
-                has 4000 videos, we will show 40 page each page has 100 video
-        """
-
-        self.playlist = playlist
-        self.titles = [x for x in playlist]
-
-        # Example: {'en': ['srt', 'vtt', ...], 'ar': ['vtt', ...], ..}}
+class MediaPresets(tk.Frame):
+    def __init__(self, parent, subtitles=None):
         self.subtitles = subtitles
-        self.download_info = None
-
-        # initialize super
-        tk.Toplevel.__init__(self, parent)
-
-        width = int(parent.winfo_width())
-        height = int(parent.winfo_height())
-        self.minsize(*parent.minsize())
-        center_window(self, width=width, height=height, reference=parent)
-
-        self.title('Playlist download window')
 
         self.mediatype = tk.StringVar()
         self.video_ext = tk.StringVar()
         self.video_quality = tk.StringVar()
-        self.dash_audio_quality = tk.StringVar()
+        self.dash_audio = tk.StringVar()
         self.audio_ext = tk.StringVar()
         self.audio_quality = tk.StringVar()
         self.sub_var = tk.BooleanVar()
 
-        self.num_options = config.playlist_autonum_options
-        self.load_global_presets()
+        tk.Frame.__init__(self, parent, bg=MAIN_BG)
 
-        self.create_widgets()
-
-    def create_widgets(self):
-        main_fr = tk.Frame(self, bg=MAIN_BG)
-        main_fr.pack(fill='both', expand=True)
-        top_fr = tk.Frame(main_fr, bg=MAIN_BG)
-        middle_fr = tk.Frame(main_fr, bg=MAIN_BG)
-        bottom_fr = tk.Frame(main_fr, bg=MAIN_BG)
-
-        av_fr = tk.Frame(top_fr, bg=MAIN_BG)
+        av_fr = tk.Frame(self, bg=MAIN_BG)
         av_fr.pack(anchor='w', fill='x', expand=True)
 
         def av_callback(option):
@@ -2347,7 +2310,7 @@ class SimplePlaylist(tk.Toplevel):
                  width=10, textvariable=self.video_quality).pack(side='left', padx=(0, 3))
         tk.Label(video_fr, text='audio quality: ', bg=MAIN_BG, fg=MAIN_FG).pack(side='left', padx=(10, 0))
         Combobox(video_fr, values=config.dash_audio_choices, width=6, selection=config.media_presets['dash_audio'],
-                 textvariable=self.dash_audio_quality).pack(side='left', padx=(0, 3))
+                 textvariable=self.dash_audio).pack(side='left', padx=(0, 3))
 
         # audio --------------------------------------------------------------------------------------------------------
         audio_fr = tk.Frame(av_fr, bg=MAIN_BG)
@@ -2384,6 +2347,110 @@ class SimplePlaylist(tk.Toplevel):
                 self.sub_lang.config(values=langs, width=lang_width)
                 self.sub_lang.set(lang)
                 sub_lang_callback(lang)
+
+    def get_info(self):
+        info_dict = dict(
+            video_ext=self.video_ext.get(),
+            video_quality=self.video_quality.get(),
+            dash_audio=self.dash_audio.get(),
+            audio_ext=self.audio_ext.get(),
+            audio_quality=self.audio_quality.get()
+        )
+        return info_dict
+
+    def save_presets(self):
+        config.media_presets = self.get_info()
+
+    def update_widgets(self, video_ext=None, video_quality=None, dash_audio=None, audio_ext=None, audio_quality=None):
+        if video_ext:
+            self.video_ext.set(video_ext)
+        if video_quality:
+            self.video_quality.set(video_quality)
+        if dash_audio:
+            self.dash_audio.set(dash_audio)
+        if audio_ext:
+            self.audio_ext.set(audio_ext)
+        if audio_quality:
+            self.audio_quality.set(audio_quality)
+
+    def get_stream_options(self):
+        mediatype = self.mediatype.get().lower()
+
+        if mediatype == config.MediaType.video:
+            # {'mediatype': 'video', 'extension': 'webm', 'quality': '720p', 'dashaudio': 'auto'}
+            stream_options = dict(
+                mediatype=mediatype,
+                extension=self.video_ext.get(),
+                quality=self.video_quality.get(),
+                dashaudio=self.dash_audio.get()
+            )
+
+        else:
+            # {'mediatype': 'audio', 'extension': 'opus', 'quality': 'best'}
+            stream_options = dict(
+                mediatype=config.MediaType.audio,
+                extension=self.audio_ext.get(),
+                quality=self.audio_quality.get(),
+            )
+
+        # lower case
+        stream_options = {k.lower(): v.lower() for k, v in stream_options.items()}
+        return stream_options
+
+    def get_subtitles(self):
+        # subtitles
+        lang = self.sub_lang.get()
+        ext = self.sub_ext.get()
+        if self.sub_var.get() and lang and ext:
+            subtitles = {lang: ext}
+        else:
+            subtitles = None
+        return subtitles
+
+
+class SimplePlaylist(tk.Toplevel):
+    """class for downloading video playlist
+        """
+    def __init__(self, parent, playlist=None, subtitles=None):
+        """initialize
+
+        Args:
+            parent: parent window (root)
+            playlist (iterable): video names only in a playlist, e.g. ('1- cats in the wild', '2- car racing', ...)
+                in case we have a huge playlist
+                e.g. https://www.youtube.com/watch?v=BZyjT5TkWw4&list=PL2aBZuCeDwlT56jTrxQ3FExn-dtchIwsZ
+                has 4000 videos, we will show 40 page each page has 100 video
+        """
+
+        self.playlist = playlist
+        self.titles = [x for x in playlist]
+
+        # Example: {'en': ['srt', 'vtt', ...], 'ar': ['vtt', ...], ..}}
+        self.subtitles = subtitles
+        self.download_info = None
+
+        # initialize super
+        tk.Toplevel.__init__(self, parent)
+
+        width = int(parent.winfo_width())
+        height = int(parent.winfo_height())
+        self.minsize(*parent.minsize())
+        center_window(self, width=width, height=height, reference=parent)
+
+        self.title('Playlist download window')
+        self.num_options = config.playlist_autonum_options
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        main_fr = tk.Frame(self, bg=MAIN_BG)
+        main_fr.pack(fill='both', expand=True)
+        top_fr = tk.Frame(main_fr, bg=MAIN_BG)
+        middle_fr = tk.Frame(main_fr, bg=MAIN_BG)
+        bottom_fr = tk.Frame(main_fr, bg=MAIN_BG)
+
+        self.presets = MediaPresets(top_fr, subtitles=self.subtitles)
+        self.presets.pack(anchor='w', fill='x', expand=True)
 
         # select frame -------------------------------------------------------------------------------------------------
         select_lbl_var = tk.StringVar()
@@ -2543,25 +2610,6 @@ class SimplePlaylist(tk.Toplevel):
 
         top.wait_window()
 
-    def save_global_presets(self):
-        # update global settings
-        config.media_presets = dict(
-            video_ext=self.video_ext.get(),
-            video_quality=self.video_quality.get(),
-            dash_audio=self.dash_audio_quality.get(),
-            audio_ext=self.audio_ext.get(),
-            audio_quality=self.audio_quality.get()
-        )
-
-    def load_global_presets(self):
-        p = config.media_presets
-        if p:
-            self.video_ext.set(p.get('video_ext'))
-            self.video_quality.set(p.get('video_quality'))
-            self.dash_audio_quality.set(p.get('dash_audio'))
-            self.audio_ext.set(p.get('audio_ext'))
-            self.audio_quality.set(p.get('audio_quality'))
-
     def download(self, download_later=False):
         # selected e.g. {2: 'entry - 2', 4: 'entry - 4', 8: 'entry - 8'}
         selected_idx = [int(x) for x in self.table.selection()]
@@ -2576,45 +2624,14 @@ class SimplePlaylist(tk.Toplevel):
             folder=self.browse.folder
         )
 
-        # get other options
-        mediatype = self.mediatype.get().lower()
-
-        if mediatype == config.MediaType.video:
-            # {'mediatype': 'video', 'extension': 'webm', 'quality': '720p', 'dashaudio': 'auto'}
-            stream_options = dict(
-                mediatype=mediatype,
-                extension=self.video_ext.get(),
-                quality=self.video_quality.get(),
-                dashaudio=self.dash_audio_quality.get()
-            )
-
-        else:
-            # {'mediatype': 'audio', 'extension': 'opus', 'quality': 'best'}
-            stream_options = dict(
-                mediatype=config.MediaType.audio,
-                extension=self.audio_ext.get(),
-                quality=self.audio_quality.get(),
-            )
-
-        # lower case
-        stream_options = {k.lower(): v.lower() for k, v in stream_options.items()}
-
-        # subtitles
-        lang = self.sub_lang.get()
-        ext = self.sub_ext.get()
-        if self.sub_var.get() and lang and ext:
-            subtitles = {lang: ext}
-        else:
-            subtitles = None
-
         self.download_info = dict(
             selected_items=selected_items,
-            stream_options=stream_options,
+            stream_options=self.presets.get_stream_options(),
             download_options=download_options,
-            subtitles=subtitles
+            subtitles=self.presets.get_subtitles()
         )
 
-        self.save_global_presets()
+        self.presets.save_presets()
 
         self.destroy()
 
