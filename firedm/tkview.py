@@ -4323,8 +4323,10 @@ class MainWindow(IView):
         if deltarget:
             res = self.popup('SHIFT-DELETE file(s) permanently????', title='WARNING', buttons=('Yes', 'No'),
                              bg='white', fg='red', font='any 14 bold')
-        else:
+        elif [x for x in items if x.status not in (config.Status.completed, config.Status.error)]:
             res = self.show_popup(7)
+        else:
+            res = 'Yes'
 
         if res == 'Yes':
             # actions before delete
