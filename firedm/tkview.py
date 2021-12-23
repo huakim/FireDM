@@ -3842,6 +3842,9 @@ class MainWindow(IView):
         self.extractors_menu.pack(side='left')
         extractor_frame.pack(anchor='w')
 
+        LabeledEntryOption(tab, 'FFMPEG path:', entry_key='ffmpeg_actual_path').pack(
+            anchor='w', fill='x', expand=True, padx=(0, 5))
+
         separator()
 
         # ------------------------------------------------------------------------------------Authentication options----

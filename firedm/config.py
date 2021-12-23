@@ -23,7 +23,8 @@ settings_keys = [
     'username', 'password', 'max_connections', 'minimize_to_systray', 'monitor_clipboard', 'on_download_notification',
     'proxy', 'recent_folders', 'refresh_url_retries', 'scrollbar_width', 'speed_limit', 'update_frequency',
     'playlist_autonum_options', 'use_server_timestamp', 'window_size', 'write_metadata', 'view_mode', 'temp_folder',
-    'window_maximized', 'force_window_maximize', 'd_preview', 'updater_version', 'media_presets', 'video_title_template'
+    'window_maximized', 'force_window_maximize', 'd_preview', 'updater_version', 'media_presets',
+    'video_title_template', 'ffmpeg_actual_path'
 ]
 
 # ----------------------------------------------------------------------------------------General ----------------------
