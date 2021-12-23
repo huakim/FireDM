@@ -4455,6 +4455,7 @@ class MainWindow(IView):
     # endregion
 
     # region download
+    @threaded
     def download_btn_callback(self, download_later=False):
         """callback for download button in main tab"""
         # download
