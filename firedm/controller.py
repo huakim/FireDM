@@ -1030,7 +1030,6 @@ class Controller:
 
         self.download(d, silent=True)
 
-    @threaded
     def autodownload(self, url, **kwargs):
         """download file automatically without user intervention
         for video files it should download best quality, for video playlist, it will download first video
