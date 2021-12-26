@@ -1,3 +1,7 @@
+2021.12.26:
+- critical bug fix for quality selector in playlist window.
+- add filechooser button for ffmpeg path option, issue #409.
+
 2021.12.23:
 - fix cmdline download closes #386.
 - fix no subtitles.
