@@ -1125,6 +1125,16 @@ filechooser = FileDialog().run
 folderchooser = FileDialog(foldersonly=True).run
 
 
+def filechooser_button(parent, target, cmd=None, foldersonly=False):
+    def set_target():
+        """get cookie file path"""
+        fp = folderchooser() if foldersonly else filechooser()
+        if fp:
+            target.set(fp)
+
+    return Button(parent, image=imgs['folder_icon'], command=cmd or set_target)
+
+
 class Browse(tk.Frame):
     """a frame contains an entry widget and browse button to browse for folders"""
     def __init__(self, parent=None, value='', bg=None, fg=None, label='Folder:', callback=None, buttonfirst=False, **kwargs):
@@ -3842,8 +3852,11 @@ class MainWindow(IView):
         self.extractors_menu.pack(side='left')
         extractor_frame.pack(anchor='w')
 
-        LabeledEntryOption(tab, 'FFMPEG path:', entry_key='ffmpeg_actual_path').pack(
-            anchor='w', fill='x', expand=True, padx=(0, 5))
+        ffmpeg_frame = tk.Frame(tab, bg=MAIN_BG)
+        ffmpeg_frame.pack(anchor='w', fill='x', expand=True, padx=(0, 5))
+        ffmpeg_entry = LabeledEntryOption(ffmpeg_frame, 'FFMPEG path:', entry_key='ffmpeg_actual_path')
+        ffmpeg_entry.pack(side='left', anchor='w', fill='x', expand=True, padx=5)
+        filechooser_button(ffmpeg_frame, ffmpeg_entry).pack(side='left', padx=5)
 
         separator()
 
@@ -3865,19 +3878,11 @@ class MainWindow(IView):
                         key='ibus_workaround').pack(anchor='w')
 
         # cookies
-        def get_cookie_file(target):
-            """get cookie file path"""
-            fp = filechooser()
-            if fp:
-                target.set(fp)
-
         cookies_frame = tk.Frame(tab, bg=MAIN_BG)
-        cookies = CheckEntryOption(cookies_frame, 'Cookies file:', check_key='use_cookies',
-                                   entry_key='cookie_file_path')
-        cookies.pack(side='left', expand=True, fill='x')
-        Button(cookies_frame, image=imgs['folder_icon'],
-               command=lambda: get_cookie_file(cookies)).pack(side='left', padx=5)
         cookies_frame.pack(anchor='w', fill='x', expand=True, padx=(0, 5))
+        c = CheckEntryOption(cookies_frame, 'Cookies file:', check_key='use_cookies', entry_key='cookie_file_path')
+        c.pack(side='left', expand=True, fill='x')
+        filechooser_button(cookies_frame, c).pack(side='left', padx=5)
 
         CheckEntryOption(tab, 'Referee url:', check_key='use_referer',
                          entry_key='referer_url').pack(anchor='w', fill='x', expand=True, padx=(0, 5))
