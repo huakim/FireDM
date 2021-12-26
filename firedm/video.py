@@ -360,14 +360,15 @@ class Video(DownloadItem):
                         q_dict = {v.lower(): k for k, v in config.vq.items()}
                         quality = q_dict.get(quality, quality)
 
-                        if not quality.isdigit():
+                        if isinstance(quality, str):
                             # extract numbers from quality text
                             match = re.match(r'\d+', quality)
                             if match:
                                 quality = match.group()
 
-                        if quality.isdigit():
                             quality = int(quality)
+
+                        if isinstance(quality, int):
                             streams = sorted(streams, key=lambda item: abs(quality - item.quality))
 
                 # select stream ----------------------------------------------------------------------------------------
