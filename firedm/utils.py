@@ -50,6 +50,16 @@ def threaded(func):
     return wraper
 
 
+def thread_after(seconds, func, *args, **kwargs):
+    """ run any function / method after certain time delay in a thread"""
+
+    def delayer():
+        time.sleep(seconds)
+        func(*args, **kwargs)
+
+    Thread(target=delayer, daemon=True).start()
+
+
 def ignore_errors(func):
     """a decorator to run any function / method in a try-except block to ignore errors"""
 
@@ -1297,7 +1307,7 @@ __all__ = [
     'auto_rename', 'calc_md5', 'calc_md5_sha256', 'calc_sha256', 'get_range_list',
     'run_thread', 'generate_unique_name', 'open_webpage', 'threaded', 'parse_urls', 'get_media_duration',
     'get_pkg_path', 'get_pkg_version', 'import_file', 'zip_extract', 'create_folder', 'simpledownload', 'ignore_errors',
-    'check_write_permission'
+    'check_write_permission', 'thread_after'
 ]
 
 if __name__ == '__main__':

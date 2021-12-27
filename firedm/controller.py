@@ -677,8 +677,17 @@ class Controller:
         download_options = download_info.setdefault('download_options', {})
         subtitles = download_info.get('subtitles', {})
 
+        for i, d in enumerate([self.last_active_playlist[idx] for idx in selected_items]):
+            if not d.all_streams:
+                thread_after(i/2, process_video, d)
+
         for idx, title in selected_items.items():
             d = self.last_active_playlist[idx]
+
+            for i in range(10):
+                if not d.busy:
+                    break
+                time.sleep(1)
 
             # process video
             if not d.all_streams:
@@ -703,7 +712,7 @@ class Controller:
                 d.folder = folder
 
             self.download(d, silent=True, **download_options, **kwargs)
-            time.sleep(1)
+            time.sleep(0.1)
 
             if subtitles:
                 self.download_subtitles(subtitles, d=d)
