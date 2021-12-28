@@ -2868,8 +2868,8 @@ class BatchWindow(tk.Toplevel):
         # bind window close
         self.protocol("WM_DELETE_WINDOW", self.close)
 
-        width = int(self.parent.winfo_width() * 0.5)
-        height = int(self.parent.winfo_height() * 0.5)
+        width = int(self.parent.winfo_width() * 0.75)
+        height = int(self.parent.winfo_height() * 0.75)
         center_window(self, width=width, height=height, reference=self.parent)
 
         self.title('Batch Download')
@@ -2897,7 +2897,7 @@ class BatchWindow(tk.Toplevel):
                tooltip='load urls from a file').pack(side='right', padx=5)
         f.pack(anchor='w', fill='x')
 
-        self.urls_text = atk.ScrolledText(main_frame, height=4, width=10, sbar_bg=SBAR_BG, sbar_fg=SBAR_FG, bg=MAIN_BG,
+        self.urls_text = atk.ScrolledText(main_frame, height=2, width=10, sbar_bg=SBAR_BG, sbar_fg=SBAR_FG, bg=MAIN_BG,
                                           fg=MAIN_FG, insertbackground=MAIN_FG)
         self.urls_text.pack(expand=True, fill='both')
 
