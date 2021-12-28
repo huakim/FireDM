@@ -1069,12 +1069,12 @@ class FileDialog:
         if config.operating_system == 'Linux':
             # looking for zenity
             error, zenity_path = run_command('which zenity', verbose=False)
-            if zenity_path:
+            if os.path.isfile(zenity_path):
                 self.use = 'zenity'
             else:
                 # looking for kdialog
                 error, kdialog_path = run_command('which kdialog', verbose=False)
-                if kdialog_path:
+                if os.path.isfile(kdialog_path):
                     self.use = 'kdialog'
 
     def run(self, initialdir=''):
