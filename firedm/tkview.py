@@ -3557,15 +3557,12 @@ class MainWindow(IView):
 
         # download button ----------------------------------------------------------------------------------------------
         db_fr = tk.Frame(home_tab, width=60, background=MAIN_BG)
-        db_fr.grid(row=2, column=3, padx=1, pady=5, sticky='e')
+        db_fr.grid(row=2, column=3, columnspan=2, padx=1, pady=5, sticky='es')
         Button(db_fr, text='Download', image=imgs['downloadbtn_icon'], command=self.download_btn_callback,
                font='any 12').pack(side='left')
         # download Later button ----------------------------------------------------------------------------------------
         Button(db_fr, image=imgs['later_icon'], command=lambda: self.download_btn_callback(download_later=True),
                tooltip='Download Later').pack(side='left', fill='y', pady=1)
-
-        # spacer to keep the column with a fixed size for zoomed button images to look better on mouse hover
-        tk.Frame(home_tab, width=60, background=MAIN_BG).grid(row=2, column=4, padx=5, pady=10)
 
         return home_tab
 
