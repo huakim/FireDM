@@ -607,12 +607,12 @@ class Stream:
     @property
     def mediatype(self):
         if not self._mediatype:
-            if self.vcodec == 'none':
+            if self.vcodec != 'none':
+                self._mediatype = 'normal' if self.acodec != 'none' else 'dash'
+            elif self.acodec != 'none':
                 self._mediatype = 'audio'
-            elif self.acodec == 'none':
-                self._mediatype = 'dash'
             else:
-                self._mediatype = 'normal'
+                self._mediatype = 'others'
 
         return self._mediatype
 
