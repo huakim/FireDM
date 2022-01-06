@@ -1160,7 +1160,7 @@ class Browse(tk.Frame):
         folder_entry.bind('<FocusOut>', self.update_recent_folders, add='+')
         folder_entry.bind('<1>', self.update_recent_folders, add='+')
 
-        browse_btn = Button(self, text='', image=imgs['folder_icon'], transparent=True, tooltip='change folder')
+        browse_btn = Button(self, text='', image=imgs['folder_icon'], transparent=True, tooltip='Change Folder')
 
         # packing
         if buttonfirst:
@@ -2894,7 +2894,7 @@ class BatchWindow(tk.Toplevel):
         tk.Label(f, text='Download multiple links:', bg=MAIN_BG,
                  fg=MAIN_FG).pack(side='left', anchor='w', pady=5)
         Button(f, image=imgs['folder_icon'], command=self.load_batch_file,
-               tooltip='load urls from a file').pack(side='right', padx=5)
+               tooltip='Load URL(s) From a File').pack(side='right', padx=5)
         f.pack(anchor='w', fill='x')
 
         self.urls_text = atk.ScrolledText(main_frame, height=2, width=10, sbar_bg=SBAR_BG, sbar_fg=SBAR_FG, bg=MAIN_BG,
@@ -3514,9 +3514,9 @@ class MainWindow(IView):
                            bg=RCM_BG, fg=RCM_FG, afg=RCM_AFG, abg=RCM_ABG)
 
         Button(urlfr, image=imgs['paste_icon'], command=lambda: self.url_var.set(self.paste()),
-               tooltip='clear and paste [Ctrl-Shift-V]').pack(side='left', padx=10)
+               tooltip='Clear & Paste [Ctrl+Shift+V]').pack(side='left', padx=10)
         Button(urlfr, image=imgs['clear_icon'], command=lambda: self.url_var.set(''),
-               tooltip='clear').pack(side='left')
+               tooltip='Clear').pack(side='left')
 
         # retry button -------------------------------------------------------------------------------------------------
         self.retry_btn = Button(home_tab, image=imgs['refresh_icon'], command=lambda: self.refresh_url(self.url), tooltip='Retry')
@@ -3533,7 +3533,7 @@ class MainWindow(IView):
         Button(self.pl_menu, image=imgs['playlist_icon'], command=self.download_playlist, tooltip='Download Playlist').place(relx=1, rely=0, x=-40, y=5)
         self.stream_menu = MediaListBox(home_tab, bg, 'Streams:')
         self.stream_menu.grid(row=1, column=1, rowspan=1, padx=15, pady=10, sticky='nsew')
-        Button(self.stream_menu, image=imgs['audio_icon'], command=self.select_dash_audio, tooltip='audio quality').place(relx=1, rely=0, x=-40, y=5)
+        Button(self.stream_menu, image=imgs['audio_icon'], command=self.select_dash_audio, tooltip='Audio Quality').place(relx=1, rely=0, x=-40, y=5)
 
         # bind menu selection
         self.pl_menu.listbox.bind('<<ListboxSelect>>', self.video_select_callback)
@@ -3542,7 +3542,7 @@ class MainWindow(IView):
         # playlist download, sub buttons -------------------------------------------------------------------------------
         pl_sub_frame = tk.Frame(home_tab, background=MAIN_BG)
 
-        Button(pl_sub_frame, image=imgs['bat_icon'], command=self.show_batch_window, tooltip='Batch download').pack(pady=0, padx=5)
+        Button(pl_sub_frame, image=imgs['bat_icon'], command=self.show_batch_window, tooltip='Batch Download').pack(pady=0, padx=5)
         Button(pl_sub_frame, image=imgs['subtitle_icon'], command=self.show_subtitles_window, tooltip='Download Subtitle').pack(pady=20, padx=5)
         Button(pl_sub_frame, image=imgs['about_icon'], command=self.show_about_notes, tooltip='About').pack(pady=0, padx=5)
 
@@ -3573,7 +3573,7 @@ class MainWindow(IView):
         top_fr = tk.Frame(tab, bg=HDG_BG)
         top_fr.pack(fill='x', pady=(5, 0), padx=0)
 
-        self.select_btn = Button(top_fr, text='', image=imgs['select_icon'], tooltip='select')
+        self.select_btn = Button(top_fr, text='', image=imgs['select_icon'], tooltip='Select')
         self.select_btn.pack(side='left', padx=5)
 
         self.select_btn.rcm = atk.RightClickMenu(
@@ -3583,7 +3583,7 @@ class MainWindow(IView):
             bg=RCM_BG, fg=RCM_FG, abg=RCM_ABG, afg=RCM_AFG, bind_left_click=True,
             bind_right_click=False)
 
-        self.view_btn = Button(top_fr, text='', image=imgs['view_icon'], tooltip='view')
+        self.view_btn = Button(top_fr, text='', image=imgs['view_icon'], tooltip='View')
         self.view_btn.pack(side='left', padx=5)
 
         self.view_btn.rcm = atk.RightClickMenu(
@@ -3599,7 +3599,7 @@ class MainWindow(IView):
 
         rcm_marker(self.view_btn.rcm, default=config.view_mode)
 
-        self.filter_btn = Button(top_fr, text='', image=imgs['filter_icon'], tooltip='filter')
+        self.filter_btn = Button(top_fr, text='', image=imgs['filter_icon'], tooltip='Filter')
         self.filter_btn.pack(side='left', padx=5)
 
         self.filter_btn.rcm = atk.RightClickMenu(
@@ -3686,7 +3686,7 @@ class MainWindow(IView):
                 self.apply_theme(theme_name)
         Button(themes_frame, text='Apply', command=apply_theme).pack(side='left', padx=5)
 
-        theme_opt_btn = Button(themes_frame, text='Options', command=self.del_theme, tooltip='theme options')
+        theme_opt_btn = Button(themes_frame, text='Options', command=self.del_theme, tooltip='Theme Options')
         theme_opt_btn.pack(side='left', padx=10)
 
         theme_opt_map = {
@@ -3828,7 +3828,7 @@ class MainWindow(IView):
             proxy_entry.set(url)
 
         prefix_menu = ['http://', 'https://', 'socks4://', 'socks4a://', 'socks5://', 'socks5h://']
-        prefix_btn = Button(proxy_frame, text='prefix', tooltip='add or change prefix')
+        prefix_btn = Button(proxy_frame, text='prefix', tooltip='Add or Change Prefix')
         prefix_btn.pack(side='left', padx=5)
         atk.RightClickMenu(prefix_btn, prefix_menu, callback=prefix_callback, bind_left_click=True, bg=RCM_BG,
                            fg=RCM_FG, abg=RCM_ABG, afg=RCM_AFG)
@@ -4042,7 +4042,7 @@ class MainWindow(IView):
         if config.FROZEN or config.isappimage:
             for i, pkg in enumerate(('firedm', 'youtube_dl', 'yt_dlp')):
                 Button(update_frame, text='Rollback', command=lambda x=pkg: self.rollback_pkg_update(x),
-                       tooltip=f'restore previous {pkg} version',
+                       tooltip=f'Restore Previous {pkg} Version',
                        image=imgs['undo_icon']).grid(row=i + 1, column=3, sticky='w', pady=5)
 
         Button(update_frame, text='Check for updates', compound='left',
