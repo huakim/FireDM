@@ -220,9 +220,12 @@ window_size = DEFAULT_WINDOW_SIZE
 window_maximized = False
 force_window_maximize = False
 
-DEFAULT_VIEW_MODE = 'mix'
+BULK = 'Bulk'
+COMPACT = 'Compact'
+MIX = 'Mix'
+DEFAULT_VIEW_MODE = MIX
 view_mode = DEFAULT_VIEW_MODE
-view_mode_choices = ('compact', 'bulk', 'mix')
+view_mode_choices = (COMPACT, BULK, MIX)
 view_filter = 'ALL'  # show all
 d_preview = False  # preview for download items
 

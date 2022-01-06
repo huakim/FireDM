@@ -38,6 +38,7 @@ from .view import IView
 from .controller import Controller, set_option, get_option, log_runtime_info
 from .utils import *
 from . import config
+from .config import BULK, COMPACT, MIX
 from . import iconsbase64
 from .iconsbase64 import *
 from .systray import SysTray
@@ -1509,7 +1510,7 @@ class Segmentbar(tk.Canvas):
 class DItem(tk.Frame):
     """representation view of one download item in downloads tab"""
 
-    def __init__(self, parent, uid, status, bg=None, fg=None, on_toggle_callback=None, mode='compact',
+    def __init__(self, parent, uid, status, bg=None, fg=None, on_toggle_callback=None, mode=COMPACT,
                  playbtn_callback=None, delbtn_callback=None, onclick=None, ondoubleclick=None, bind_map=None,
                  rcm=None, rcm_callback=None):
 
@@ -1623,14 +1624,14 @@ class DItem(tk.Frame):
 
         change_colors(self, selection_fg, selection_bg)
 
-        if self.mode == 'compact':
+        if self.mode == COMPACT:
             for name in ('status_icon', 'play_button', 'name_lbl', 'info_lbl', 'delete_button', 'blinker',
                          'main_frame'):
                 w = getattr(self, name, None)
                 if w:
                     change_colors(w, selection_fg, selection_bg)
 
-        elif self.mode == 'bulk':
+        elif self.mode == BULK:
             for name in ('btns_frame', 'bar_fr', 'blinker', 'status_icon', 'play_button', 'name_lbl', 'info_lbl',
                          'info_lbl2', 'delete_button', 'bar', 'bar_fr', 'main_frame'):
                 w = getattr(self, name, None)
@@ -1785,7 +1786,7 @@ class DItem(tk.Frame):
         self.delete_button = Button(self.main_frame, image=imgs['delete_icon'], command=self.delbtn_callback)
         self.delete_button.grid(row=0, column=6, padx=5, sticky='w')
 
-    def view(self, mode='compact'):
+    def view(self, mode=COMPACT):
         """
         pack/grid widgets
         Args:
@@ -1794,16 +1795,16 @@ class DItem(tk.Frame):
 
         mode = self.validate_viewmode(mode)
 
-        if mode == 'bulk':
+        if mode == BULK:
             self.view_bulk()
         else:
             self.view_compact()
 
     def validate_viewmode(self, mode):
-        if mode == 'mix':
-            mode = 'bulk' if self.status in config.Status.active_states else 'compact'
-        elif mode not in ('bulk', 'compact'):
-            mode = 'compact'
+        if mode == MIX:
+            mode = BULK if self.status in config.Status.active_states else COMPACT
+        elif mode not in (BULK, COMPACT):
+            mode = COMPACT
 
         return mode
 
@@ -1845,7 +1846,7 @@ class DItem(tk.Frame):
         except:
             pass
 
-        if self.mode == 'compact':
+        if self.mode == COMPACT:
             if self.status in config.Status.active_states:
                 self.status_icon.grid_remove()
                 self.blinker.grid()
@@ -1857,7 +1858,7 @@ class DItem(tk.Frame):
             if self.status == config.Status.completed:
                 self.play_button.grid_remove()
 
-        elif self.mode == 'bulk':
+        elif self.mode == BULK:
             for widget in (self.play_button, self.bar, self.bar_fr, self.segment_bar):
                 if self.status == config.Status.completed:
                     widget.grid_remove()
@@ -1885,11 +1886,11 @@ class DItem(tk.Frame):
 
     def display_info(self):
         """display info in tkinter widgets"""
-        if self.mode == 'compact':
+        if self.mode == COMPACT:
             size = f'{self.total_size}' if self.status == config.Status.completed else f'{self.size}/{self.total_size}'
             self.info_lbl.config(text=f'{size} {self.speed} {self.eta}   {self.errors} {self.progress}')
 
-        elif self.mode == 'bulk':
+        elif self.mode == BULK:
             size = f'{self.size}/{self.total_size}' if self.size or self.total_size else ''
             self.info_lbl.config(text=f'{size} {self.speed} {self.eta}   {self.errors} '
                                       f'{self.shutdown_pc} {self.on_completion_command}')
@@ -1915,10 +1916,10 @@ class DItem(tk.Frame):
             stext = ''
             fg = 'black'
 
-        if self.mode == 'compact':
+        if self.mode == COMPACT:
             self.status_icon.config(text=stext, fg=fg)
 
-        elif self.mode == 'bulk':
+        elif self.mode == BULK:
             self.thumbnail_label.config(text=text, fg=fg)
 
     def update(self, name=None, downloaded=None, progress=None, total_size=None, eta=None, speed=None,
@@ -3578,7 +3579,7 @@ class MainWindow(IView):
 
         self.select_btn.rcm = atk.RightClickMenu(
             self.select_btn,
-            ['Select all', 'Select None', 'Select completed', 'Select Uncompleted'],
+            ['Select All', 'Select None', 'Select Completed', 'Select Uncompleted'],
             callback=lambda option_name: self.select_ditems(option_name),
             bg=RCM_BG, fg=RCM_FG, abg=RCM_ABG, afg=RCM_AFG, bind_left_click=True,
             bind_right_click=False)
@@ -3690,11 +3691,11 @@ class MainWindow(IView):
         theme_opt_btn.pack(side='left', padx=10)
 
         theme_opt_map = {
-            'New theme': self.new_theme,
-            'Manual theme(s) entry': self.manual_theme_entry,
-            'Edit theme': self.edit_theme,
-            'Copy theme info': self.share_theme,
-            'Delete theme': self.del_theme,
+            'New Theme': self.new_theme,
+            'Manual Theme(s) Entry': self.manual_theme_entry,
+            'Edit Theme': self.edit_theme,
+            'Copy Theme Info': self.share_theme,
+            'Delete Theme': self.del_theme,
         }
 
         atk.RightClickMenu(theme_opt_btn, theme_opt_map.keys(), callback=lambda option: theme_opt_map[option](),
@@ -4171,7 +4172,7 @@ class MainWindow(IView):
     # region d_preview
     def create_d_preview(self, parent=None):
         parent = parent or self.downloads_frame
-        p = DItem(parent, None, '', mode='bulk', bg=MAIN_BG)
+        p = DItem(parent, None, '', mode=BULK, bg=MAIN_BG)
         p.config(highlightthickness=5, highlightbackground=BTN_BG, highlightcolor=BTN_BG)
         p.name_lbl['text'] = 'Select an item to preview here'
         p.thumbnail_label['image'] = imgs['wmap']
@@ -4239,16 +4240,16 @@ class MainWindow(IView):
         rcm_map = {
             'Open File  (Enter)': lambda uid: self.controller.play_file(uid=uid),
             'Open File Location': lambda uid: self.controller.open_folder(uid=uid),
-            'Watch while downloading': lambda uid: self.controller.play_file(uid=uid),
-            'copy webpage url': lambda uid: self.copy(self.controller.get_property('url', uid=uid)),
-            'copy direct url': lambda uid: self.copy(self.controller.get_property('eff_url', uid=uid)),
-            'copy playlist url': lambda uid: self.copy(self.controller.get_property('playlist_url', uid=uid)),
+            'Watch While Downloading': lambda uid: self.controller.play_file(uid=uid),
+            'Copy Webpage URL': lambda uid: self.copy(self.controller.get_property('url', uid=uid)),
+            'Copy Direct URL': lambda uid: self.copy(self.controller.get_property('eff_url', uid=uid)),
+            'Copy Playlist URL': lambda uid: self.copy(self.controller.get_property('playlist_url', uid=uid)),
             'Resume': lambda uid: self.resume_selected(),
             'Pause': lambda uid: self.stop_selected(),
             'Delete  (Del)': lambda uid: self.delete_selected(),
-            'Schedule / unschedule': lambda uid: self.schedule_selected(),
-            'Toggle Shutdown Pc when finish': lambda uid: self.controller.toggle_shutdown(uid),
-            'On item completion command': lambda uid: self.set_on_completion_command(uid),
+            'Schedule / Unschedule': lambda uid: self.schedule_selected(),
+            'Toggle Shutdown Pc When Finish': lambda uid: self.controller.toggle_shutdown(uid),
+            'On Item Completion Command': lambda uid: self.set_on_completion_command(uid),
             'Properties': lambda uid: self.msgbox(self.controller.get_properties(uid=uid)),
         }
 
@@ -4384,7 +4385,7 @@ class MainWindow(IView):
     def select_ditems(self, command):
         """select ditems in downloads tab
         Args:
-            command (str): one of ['Select all', 'Select None', 'Select completed', 'Select Uncompleted']
+            command (str): one of ['Select All', 'Select None', 'Select Completed', 'Select Uncompleted']
         """
         items = [item for item in self.d_items.values() if item.winfo_viewable()]
 
@@ -4395,7 +4396,7 @@ class MainWindow(IView):
         if command == 'Select None':
             return
 
-        if command == 'Select completed':
+        if command == 'Select Completed':
             items = [item for item in self.d_items.values() if item.status == config.Status.completed]
 
         elif command == 'Select Uncompleted':
