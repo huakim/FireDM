@@ -133,7 +133,7 @@ vq = {
     }
 standard_video_qualities = list(vq.keys())
 video_quality_choices = ['best'] + list(vq.values()) + ['lowest']
-video_ext_choices = ('mp4', 'webm')
+video_ext_choices = ('mp4', 'webm', '3gp')
 dash_audio_choices = ('best', 'lowest')
 audio_ext_choices = ('mp3', 'aac', 'wav', 'm4a', 'opus', 'flac', 'ogg', 'webm')
 audio_quality_choices = ('best', 'lowest')
