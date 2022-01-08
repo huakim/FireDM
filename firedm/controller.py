@@ -672,17 +672,18 @@ class Controller:
                   }
 
         """
+        playlist = self.last_active_playlist
         selected_items = download_info.get('selected_items', {})
         stream_options = download_info.setdefault('stream_options', {})
         download_options = download_info.setdefault('download_options', {})
         subtitles = download_info.get('subtitles', {})
 
-        for i, d in enumerate([self.last_active_playlist[idx] for idx in selected_items]):
+        for i, d in enumerate([playlist[idx] for idx in selected_items]):
             if not d.all_streams:
                 thread_after(i/2, process_video, d)
 
         for idx, title in selected_items.items():
-            d = self.last_active_playlist[idx]
+            d = playlist[idx]
 
             for i in range(10):
                 if not d.busy:
