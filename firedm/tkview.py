@@ -2913,7 +2913,8 @@ class BatchWindow(tk.Toplevel):
         self.presets = MediaPresets(options_frame)
         self.presets.pack(anchor='w', fill='x', expand=True, pady=5)
 
-        self.browse = Browse(main_frame, value=config.download_folder)
+        self.browse = Browse(main_frame)
+        self.browse.folder = config.download_folder
         self.browse.pack(fill='x', pady=5)
 
         ttk.Separator(main_frame).pack(fill='x')
