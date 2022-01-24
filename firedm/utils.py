@@ -92,7 +92,7 @@ def set_curl_options(c, http_headers=None):
     # option is an upper case constant, or a number, e.g. pycurl.HTTPPROXYTUNNEL=61
     # curl ref: https://github.com/curl/curl/blob/master/include/curl/curl.h#L1073
 
-    # c.setopt(pycurl.USERAGENT, config.USER_AGENT)
+    c.setopt(pycurl.USERAGENT, config.http_headers['User-Agent'])
 
     # http headers must be in a list format
     headers = [f'{k}:{v}' for k, v in http_headers.items()]
