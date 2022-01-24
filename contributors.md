@@ -15,6 +15,7 @@ Developers who contributed with code:
 - @qontinuum-dev
 - @fidele000 (Fidele K.Cyisa)
 - @sajjadhossanshimanto
+- @TgSeed
 
 ---
 
