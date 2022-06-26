@@ -1,4 +1,4 @@
-Homepage: https://github.com/firedm/FireDM
+Homepage :https://github.com/GurucharanSavanth/FireDM.git
 
 [![Downloads](https://static.pepy.tech/personalized-badge/pyidm?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyIDM%20Downloads%20(pypi))](https://pepy.tech/project/pyidm)
 [![Downloads](https://static.pepy.tech/personalized-badge/firedm?period=total&units=international_system&left_color=grey&right_color=blue&left_text=FireDM%20Downloads%20(pypi))](https://pepy.tech/project/firedm)
@@ -111,7 +111,7 @@ sudo apt install fonts-symbola fonts-linuxlibertine fonts-inconsolata fonts-emoj
 3- run below code to clone this repo, create virtual environment, install requirements, create launch script, and finally run FireDM
 
 ```sh
-git clone --depth 1 https://github.com/firedm/FireDM.git
+git clone --depth 1 https://github.com/GurucharanSavanth/FireDM.git
 python3 -m venv ./.env
 source ./.env/bin/activate
 python3 -m pip install -r ./FireDM/requirements.txt
@@ -248,5 +248,5 @@ or email to: info.pyidm@gmail.com <br>
 
 Author:  
 Mahmoud Elshahat  
-2019-2021
+2019-2022
 
